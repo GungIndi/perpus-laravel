@@ -123,7 +123,7 @@ fi
 # 4. Install Application Dependencies
 # -----------------------------------
 echo "Installing Composer dependencies with php${PHP_VERSION}..."
-php${PHP_VERSION} /usr/local/bin/composer install --no-interaction --no-dev --optimize-autoloader
+php${PHP_VERSION} /usr/local/bin/composer update --no-interaction --no-dev --optimize-autoloader
 
 echo "Installing NPM dependencies and building assets..."
 npm install
