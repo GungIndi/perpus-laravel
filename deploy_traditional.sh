@@ -49,25 +49,22 @@ echo "Installing system dependencies: Nginx, MySQL, Git, Unzip..."
 # The -y flag assumes "yes" to all prompts
 apt-get install -y nginx mariadb-server git unzip curl software-properties-common
 
-# Manually add the PPA for latest PHP versions to bypass add-apt-repository issues.
-echo "Adding PHP repository manually..."
-# Ensure dependencies are present
-apt-get install -y ca-certificates apt-transport-https gpg
+# Add the repository for modern PHP versions on Debian (sury.org)
+echo "Adding deb.sury.org repository for PHP on Debian..."
+# Install prerequisites for adding custom repositories
+apt-get install -y lsb-release ca-certificates apt-transport-https software-properties-common gnupg
 
-# Create keyring directory if it doesn't exist
-mkdir -p /etc/apt/keyrings
+# Import the GPG key for the repository
+KEYRING_PATH="/etc/apt/keyrings/sury-php.gpg"
+curl -sSLo /tmp/sury.key https://packages.sury.org/php/apt.gpg
+gpg --dearmor -o "$KEYRING_PATH" /tmp/sury.key
+rm /tmp/sury.key
 
-# Get the GPG key for ondrej/php PPA
-KEYRING_PATH="/etc/apt/keyrings/ondrej-php.gpg"
-curl -sSLo /tmp/ondrej.key "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x4F4EA0AAE5267A6C"
-gpg --dearmor -o "$KEYRING_PATH" /tmp/ondrej.key
-rm /tmp/ondrej.key
+# Create the repository source file. This will use the correct Debian codename (e.g., bullseye, bookworm)
+SOURCE_LIST_PATH="/etc/apt/sources.list.d/sury-php.list"
+echo "deb [signed-by=${KEYRING_PATH}] https://packages.sury.org/php/ $(lsb_release -sc) main" > "$SOURCE_LIST_PATH"
 
-# Create the source list file, forcing it to use 'jammy' (Ubuntu 22.04 LTS) packages
-SOURCE_LIST_PATH="/etc/apt/sources.list.d/ondrej-php.list"
-echo "deb [signed-by=${KEYRING_PATH}] https://ppa.launchpadcontent.net/ondrej/php/ubuntu jammy main" > "$SOURCE_LIST_PATH"
-
-# Update package lists after adding the source
+# Update package lists after adding the new repository
 apt-get update -y
 
 # Install PHP and required extensions
