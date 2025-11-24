@@ -81,7 +81,7 @@ apt-get install -y php${PHP_VERSION}-fpm php${PHP_VERSION}-mysql php${PHP_VERSIO
 if ! [ -x "$(command -v composer)" ]; then
     echo "Installing Composer globally..."
     curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
-    php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    php${PHP_VERSION} /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
 else
     echo "Composer is already installed."
 fi
@@ -122,8 +122,8 @@ fi
 
 # 4. Install Application Dependencies
 # -----------------------------------
-echo "Installing Composer dependencies..."
-composer install --no-interaction --no-dev --optimize-autoloader
+echo "Installing Composer dependencies with php${PHP_VERSION}..."
+php${PHP_VERSION} /usr/local/bin/composer install --no-interaction --no-dev --optimize-autoloader
 
 echo "Installing NPM dependencies and building assets..."
 npm install
@@ -146,7 +146,7 @@ sed -i "s|^APP_ENV=.*|APP_ENV=production|" .env
 sed -i "s|^APP_DEBUG=.*|APP_DEBUG=false|" .env
 
 echo "Generating application key..."
-php artisan key:generate
+php${PHP_VERSION} artisan key:generate
 
 # 6. Configure Nginx
 # --------------------
@@ -194,10 +194,10 @@ chmod -R 775 ${PROJECT_DIR}/storage ${PROJECT_DIR}/bootstrap/cache
 # 8. Finalize Application Setup
 # -----------------------------
 echo "Running database migrations and caching config..."
-php artisan migrate --seed --force
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+php${PHP_VERSION} artisan migrate --seed --force
+php${PHP_VERSION} artisan config:cache
+php${PHP_VERSION} artisan route:cache
+php${PHP_VERSION} artisan view:cache
 
 echo "✅ Deployment successful!"
 echo "--------------------------"
