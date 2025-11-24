@@ -18,7 +18,7 @@ set -e
 # --- START CONFIGURATION ---
 
 # Git repository URL of your Laravel project
-REPO_URL="https://github.com/your-username/perpus-laravel.git"
+REPO_URL="https://github.com/GungIndi/perpus-laravel.git"
 
 # The directory to clone the project into
 PROJECT_DIR="/var/www/perpus-laravel"
@@ -47,11 +47,27 @@ apt-get update -y
 
 echo "Installing system dependencies: Nginx, MySQL, Git, Unzip..."
 # The -y flag assumes "yes" to all prompts
-apt-get install -y nginx mysql-server git unzip curl software-properties-common
+apt-get install -y nginx mariadb-server git unzip curl software-properties-common
 
-# Add PPA for latest PHP versions
-echo "Adding PHP repository..."
-add-apt-repository ppa:ondrej/php -y
+# Manually add the PPA for latest PHP versions to bypass add-apt-repository issues.
+echo "Adding PHP repository manually..."
+# Ensure dependencies are present
+apt-get install -y ca-certificates apt-transport-https gpg
+
+# Create keyring directory if it doesn't exist
+mkdir -p /etc/apt/keyrings
+
+# Get the GPG key for ondrej/php PPA
+KEYRING_PATH="/etc/apt/keyrings/ondrej-php.gpg"
+curl -sSLo /tmp/ondrej.key "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x4F4EA0AAE5267A6C"
+gpg --dearmor -o "$KEYRING_PATH" /tmp/ondrej.key
+rm /tmp/ondrej.key
+
+# Create the source list file, forcing it to use 'jammy' (Ubuntu 22.04 LTS) packages
+SOURCE_LIST_PATH="/etc/apt/sources.list.d/ondrej-php.list"
+echo "deb [signed-by=${KEYRING_PATH}] https://ppa.launchpadcontent.net/ondrej/php/ubuntu jammy main" > "$SOURCE_LIST_PATH"
+
+# Update package lists after adding the source
 apt-get update -y
 
 # Install PHP and required extensions
