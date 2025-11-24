@@ -101,7 +101,7 @@ echo "Securing MySQL and creating application database..."
 # Use a non-interactive method to create the database and user
 mysql -u root <<MYSQL_SCRIPT
 CREATE DATABASE IF NOT EXISTS ${DB_NAME};
-CREATE USER '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASSWORD}';
+CREATE USER IF NOT EXISTS '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASSWORD}';
 GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'localhost';
 FLUSH PRIVILEGES;
 MYSQL_SCRIPT
