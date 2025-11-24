@@ -29,7 +29,7 @@ APP_DOMAIN="_"
 # Database credentials
 DB_NAME="perpus_db"
 DB_USER="perpus_user"
-DB_PASSWORD=$(openssl rand -base64 16) # Generates a random password
+DB_PASSWORD="perpus_pass"
 
 # The PHP version to install
 PHP_VERSION="7.4"
