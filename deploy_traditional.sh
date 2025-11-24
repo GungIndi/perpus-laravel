@@ -32,7 +32,7 @@ DB_USER="perpus_user"
 DB_PASSWORD=$(openssl rand -base64 16) # Generates a random password
 
 # The PHP version to install
-PHP_VERSION="8.2"
+PHP_VERSION="7.4"
 
 # --- END CONFIGURATION ---
 
