@@ -51,6 +51,12 @@ apt-get install -y nginx mariadb-server git unzip curl software-properties-commo
 
 # Add the repository for modern PHP versions on Debian (sury.org)
 echo "Adding deb.sury.org repository for PHP on Debian..."
+
+# First, clean up any old, conflicting PPA repositories from previous attempts
+echo "Cleaning up old Ondrej PPA files to prevent conflicts..."
+rm -f /etc/apt/sources.list.d/ondrej-*.list
+rm -f /etc/apt/keyrings/ondrej-*.gpg
+
 # Install prerequisites for adding custom repositories
 apt-get install -y lsb-release ca-certificates apt-transport-https software-properties-common gnupg
 
